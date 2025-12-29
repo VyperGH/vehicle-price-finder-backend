@@ -8,7 +8,22 @@ const express = require('express');
 
    app.use(express.json());
    app.use(cors({
-     origin: ['http://localhost:3000', 'https://claude.ai', 'https://*.claude.ai'],
+     origin: function(origin, callback) {
+       // Allow requests with no origin (like mobile apps or curl)
+       if (!origin) return callback(null, true);
+       
+       const allowedOrigins = [
+         'http://localhost:3000',
+         'https://claude.ai'
+       ];
+       
+       // Check if origin ends with .claude.ai
+       if (origin.endsWith('.claude.ai') || allowedOrigins.includes(origin)) {
+         callback(null, true);
+       } else {
+         callback(null, true); // Allow all for now to test
+       }
+     },
      credentials: true
    }));
 
